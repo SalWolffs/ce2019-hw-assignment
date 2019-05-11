@@ -15,7 +15,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 -- describe the interface of the module: a testbench does not have any inputs or outputs
 entity tb_modaddn is
-    generic(width: integer := 8);
+    generic(width: integer := 128);
 end tb_modaddn;
 
 architecture behavioral of tb_modaddn is
@@ -56,10 +56,10 @@ stim: process
 begin
     wait for 10 ns;
     
-    a_i <= "10110110";
-    b_i <= "11000011";
-    p_i <= "11111101";
-    sum_true <= "01111100";
+    a_i <= x"39D21165E93802DD935F2A16CDCB9E47";
+    b_i <= x"9D57F9331AC4F83DDC9F71F83B55C72B";
+    p_i <= x"BA31A890FE7D735366E6E53D1F30ABBB";
+    sum_true <= x"1CF86208057F87C80917B6D1E9F0B9B7";
     error_comp <= '0';
     
     wait for 10 ns;
@@ -72,9 +72,9 @@ begin
     
     wait for 10 ns;
     
-    a_i <= "01011100";
-    b_i <= "10010101";
-    sum_true <= "11110001";
+    a_i <= x"81C9483F18795F2E7939D1A7634B99DA";
+    b_i <= x"2D5F5A65996B85401C4B9708D2DBAE79";
+    sum_true <= x"AF28A2A4B1E4E46E958568B036274853";
     error_comp <= '0';
     
     wait for 10 ns;
