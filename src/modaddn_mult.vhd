@@ -8,6 +8,12 @@
 -- Description: n-bit modular multiplier (through consecutive additions)
 ----------------------------------------------------------------------------------
 
+-- Define modaddn. We won't do any subtractions here, no need to use the more flexible unit.
+#include "modaddn.vhd" 
+-- Define a finite state machine for counting cycles since start
+#include "ctr_fsm.vhd"
+
+
 -- include the STD_LOGIC_1164 package in the IEEE library for basic functionality
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
@@ -29,6 +35,7 @@ end modaddn_mult;
 
 -- describe the behavior of the module in the architecture
 architecture behavioral of modaddn_mult is
+
 
 begin
 
