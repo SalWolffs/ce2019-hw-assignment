@@ -28,6 +28,8 @@ architecture behavioral of ctr_fsm is
     signal state: state_t;
     signal ctr: std_logic_vector(size-1 downto 0);
 
+
+begin
     -- Priority in conditions means we end up with nested if statements, rather
     -- than a case, since rst > start > s_live in determining what to do with
     -- state and ctr.
