@@ -11,7 +11,7 @@
 
 -- Standard libraries
 library IEEE;
-use IEEE.STD_LOGIC1164.ALL;
+use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
 entity ctr_fsm is
@@ -23,13 +23,16 @@ entity ctr_fsm is
 end ctr_fsm;
 
 architecture behavioral of ctr_fsm is
-    type state_t is (s_idle, s_live, s_done)
+    type state_t is (s_idle, s_live, s_done);
 
     signal state: state_t;
     signal ctr: std_logic_vector(size-1 downto 0);
+    signal nxt: std_logic_vector(size-1 downto 0);
 
 
 begin
+
+    nxt <= std_logic_vector(unsigned(ctr) + to_unsigned(1,size));
     -- Priority in conditions means we end up with nested if statements, rather
     -- than a case, since rst > start > s_live in determining what to do with
     -- state and ctr.
@@ -43,12 +46,10 @@ begin
                 state <= s_live;
                 ctr <= std_logic_vector(to_unsigned(0,size));
             elsif state = s_live then
-                if ctr = count then
+                if count = std_logic_vector(to_unsigned(0,size)) or count = nxt then
                     state <= s_done;
-                else
-                    ctr <= std_logic_vector(unsigned(ctr) +
-                           to_unsigned(1,size));
                 end if;
+                ctr <= nxt;
             end if;
         end if;
     end process;

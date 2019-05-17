@@ -39,7 +39,7 @@ architecture behavioral of modaddn_mult is
     signal a_reg, b_reg, p_reg, prod_old, prod_new: std_logic_vector(n-1 downto 0);
 
     component modaddn
-        generic(n: integer := 8)
+        generic(n: integer := 8);
         port(a, b, p: in std_logic_vector(n-1 downto 0);
              sum: out std_logic_vector(n-1 downto 0));
     end component;
@@ -69,7 +69,26 @@ begin
              enable => enable,
              done => done);
 
-    
+    main: process(rst,clk)
+    begin
+        if rst = '1' then
+            a_reg <= std_logic_vector(to_unsigned(0,n));
+            b_reg <= std_logic_vector(to_unsigned(0,n));
+            p_reg <= std_logic_vector(to_unsigned(0,n));
+            prod_old <= std_logic_vector(to_unsigned(0,n));
+        elsif rising_edge(clk) then
+            if start = '1' then
+                a_reg <= a;
+                b_reg <= b;
+                p_reg <= p;
+                prod_old <= std_logic_vector(to_unsigned(0,n));
+            elsif enable = '1' then
+                prod_old <= prod_new;
+            end if;
+        end if;
+    end process;
+
+    product <= prod_old;
              
 
 end behavioral;
