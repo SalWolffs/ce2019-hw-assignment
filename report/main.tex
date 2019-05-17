@@ -1,0 +1,29 @@
+\documentclass[a4paper,twoside]{article}
+
+\input{preamble.tex}
+
+\newcommand{\atom}[1]{\mbox{\texttt{#1}}}
+
+\usepackage{rwd-drafting}
+
+\title{Cryptographic Engineering ECC Project}
+
+\author{Sal Wolffs, Lars Jellema}
+
+\begin{document}
+\maketitle
+
+\section*{Exercise 4} 
+\atom{modaddn.vhd} was written by copying \atom{modadd4.vhd} and replacing any
+occurrences of \atom{3} and \atom{4} by \atom{n-1} resp. \atom{n}, as per the
+example of \atom{addn.vhd} and \atom{add4.vhd}. Expanding the test bench was
+done by adjusting the default width of the generic \atom{tb\_modaddn} entity,
+taking some 128-bit random numbers for \atom{a\_i}, \atom{b\_i} and \atom{p\_i},
+making sure one set requires a subtraction and one doesn't, and computing
+appropriate values for \atom{sum\_true} in python.
+
+
+
+
+
+\end{document}

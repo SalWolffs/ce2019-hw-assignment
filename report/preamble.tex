@@ -1,0 +1,139 @@
+
+\usepackage[utf8]{inputenc}
+\usepackage{scrextend}
+\usepackage[english]{babel}
+\usepackage{amsthm}
+\usepackage{stmaryrd}
+\usepackage{graphicx}
+%\usepackage{mathtools}
+\usepackage{keycommand}
+\usepackage{hyperref}
+\usepackage[all]{hypcap}
+\usepackage[nottoc]{tocbibind}
+
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{fact}[theorem]{Fact}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{examples}[theorem]{Examples}
+\newtheorem{example*}[theorem]{Example*}
+\newtheorem{examples*}[theorem]{Examples*}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{remark*}[theorem]{Remark*}
+\newtheorem{question}[theorem]{Question}
+\newtheorem{assumption}[theorem]{Assumption}
+
+\newtheorem*{theorem*}{Theorem}
+\newtheorem*{corollary*}{Corollary}
+\newtheorem*{lemma*}{Lemma}
+\newtheorem*{proposition*}{Proposition}
+
+\usepackage{tikzit}
+\input{zh.tikzdefs}
+
+\input{zh.tikzstyles}
+
+% do The Right Thing
+\makeatletter
+\newcommand\etc{etc\@ifnextchar.{}{.\@}\xspace}
+\newcommand\ie{i.e.\@\xspace}  % these two may be broken
+\newcommand\eg{e.g.\@\xspace}
+\makeatother
+
+\newcommand{\intf}[1]{\left\llbracket #1 \right\rrbracket} % interpretation functor
+
+\usepackage{bm}
+
+\newcommand{\bra}[1]{\ensuremath{\left\langle #1 \right|}}
+\newcommand{\ket}[1]{\ensuremath{\left|  #1 \right\rangle}}
+\newcommand{\braket}[2]{\ensuremath{\langle#1|#2\rangle}}
+\newcommand{\ketbra}[2]{\ensuremath{\ket{#1}\!\bra{#2}}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+
+\newcommand{\zh}{\text{ZH}}
+
+%TIKZ STUFF
+\tikzstyle{dotpic}=[] % for backwards-compatibility
+\tikzstyle{semilarge box}=[rectangle,inline text,fill=white,draw,minimum height=5mm,yshift=-0.5mm,minimum width=12.5mm,font=\small]
+\tikzstyle{inline text}=[text height=1.5ex, text depth=0.25ex,yshift=0.5mm]
+\tikzstyle{label}=[font=\footnotesize,text height=1.5ex, text depth=0.25ex]
+\tikzstyle{white phase dot}=[white dot]
+
+\newcommand{\dotonly}[1]{%
+\,\begin{tikzpicture}[dotpic]
+\node [#1] (a) at (0,0) {};
+\end{tikzpicture}\,}
+
+\newcommand{\dotcounit}[1]{%
+\,\begin{tikzpicture}[dotpic,yshift=-1mm]
+\node [#1] (a) at (0,0.35) {}; 
+\draw (0,-0.3)--(a);
+\end{tikzpicture}\,\xspace}
+\newcommand{\dotunit}[1]{%
+\,\begin{tikzpicture}[dotpic,yshift=1.5mm]
+\node [#1] (a) at (0,-0.35) {}; 
+\draw (a)--(0,0.3);
+\end{tikzpicture}\,\xspace}
+\newcommand{\dotcomult}[1]{%
+\,\begin{tikzpicture}[dotpic,yshift=0.5mm]
+    \node [#1] (a) {};
+    \draw (-90:0.55)--(a);
+    \draw (a) -- (45:0.6);
+    \draw (a) -- (135:0.6);
+\end{tikzpicture}\,\xspace}
+\newcommand{\dotmult}[1]{%
+\,\begin{tikzpicture}[dotpic]
+    \node [#1] (a) {};
+    \draw (a) -- (90:0.55);
+    \draw (a) (-45:0.6) -- (a);
+    \draw (a) (-135:0.6) -- (a);
+\end{tikzpicture}\,\xspace}
+
+
+\newkeycommand{\phase}[style=white phase dot][1]{\,\begin{tikzpicture}
+    \begin{pgfonlayer}{nodelayer}
+        \node [style=none] (0) at (0, 0.6) {};
+        \node [style=\commandkey{style}] (2) at (0, -0) {$#1$}; 
+        \node [style=none] (3) at (0, -0.6) {};
+    \end{pgfonlayer}
+    \begin{pgfonlayer}{edgelayer}
+        \draw (2) to (0.center);
+        \draw (3.center) to (2);
+    \end{pgfonlayer}
+\end{tikzpicture}\,}
+
+\newcommand{\gendiagram}[1]{
+\begin{tikzpicture}
+    \begin{pgfonlayer}{nodelayer}
+        \node [style=none] (0) at (-0.75, 1) {};
+        \node [style=none] (1) at (0.75, 1) {};
+        \node [style=none] (2) at (-0.75, -1) {};
+        \node [style=none] (3) at (0.75, -1) {};
+        \node [style=none] (4) at (0, 0.75) {$\ldots$};
+        \node [style=semilarge box] (5) at (0, -0) { #1 };
+        \node [style=none] (6) at (0, -0.75) {$\ldots$};
+    \end{pgfonlayer}
+    \begin{pgfonlayer}{edgelayer}
+        \draw (0.center) to (2.center);
+        \draw (1.center) to (3.center);
+    \end{pgfonlayer}
+\end{tikzpicture}
+}
+
+\newcommand{\hadastate}[1]{\,\tikz{\node[style=hadamard] (x) {$#1$};\draw(x)--(0,0.75);}\,}
+\newcommand{\hadadot}{\dotonly{small hadamard}\xspace}
+\newcommand{\hadaunit}{\dotunit{small hadamard}}
+\newcommand{\hadacounit}{\dotcounit{small hadamard}}
+\newcommand{\hadamult}{\dotmult{small hadamard}}
+\newcommand{\hadacomult}{\dotcomult{small hadamard}}
+\newcommand{\hadacap}{\dotcap{small hadamard}}
+\newcommand{\hadacup}{\dotcup{small hadamard}}
+\newcommand{\graymult}{\dotmult{gray dot}}
+\newcommand{\grayphase}[1]{\phase[style=gray phase dot]{#1}}

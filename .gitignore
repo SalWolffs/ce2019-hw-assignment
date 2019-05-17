@@ -1,3 +1,7 @@
 *.ghw
 *.cf
 build/
+*.bbl
+*.aux
+*.toc
+*.blg
