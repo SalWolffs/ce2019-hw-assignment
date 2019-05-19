@@ -74,7 +74,7 @@ inst_modarithn: modarithn
         rst => rst_i,
         clk => clk_i,
         start => start_i,
-        oper => command_i,
+        command => command_i,
         product => product_i,
         done => done_i
     );

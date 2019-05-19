@@ -22,6 +22,38 @@ taking some 128-bit random numbers for \atom{a\_i}, \atom{b\_i} and \atom{p\_i},
 making sure one set requires a subtraction and one doesn't, and computing
 appropriate values for \atom{sum\_true} in python.
 
+\section*{Exercise 7}
+For \atom{modaddn\_mult.vhd}, we wrote a separate file for the finite state
+machine (TODO: add full paragraph on \atom{ctr\_fsm}) and added it and
+\atom{modaddn} as components. \atom{modaddsubn} was not needed here, we know
+we'll only do additions. We adjusted the FSM to hold "done" after reaching its
+limit, rather than resetting. 
+
+\section*{Exercise 8}
+We wrote a modular piso left shift register (i.e. one that outputs the MSB and
+shifts it out on each cycle) \atom{piso\_lshiftreg} to scan through the bits of
+\atom{b} in \atom{modmultn}. We also wrote a modulo left shifter which shifts
+its input by 1 bit and reduces it modulo the given \atom{p}, using the same
+logic as in \atom{modaddn}. Re-using \atom{ctr\_fsm}, this time with the width
+of \atom{b} as constant input (TODO: might be able to optimise by hardcoding
+within \atom{ctr\_fsm}, at the cost of losing this re-use), we could now easily
+double-and-add modulo p within the main module.
+
+\section*{Exercise 9}
+TODO: Drawing. The basic design is a simple glueing of earlier components with
+some muxes and input buffers: \atom{modmultn} has buffered input and only
+updates its inputs on receiving "start".  \atom{modaddsubn} is asynchronous, and
+so will compute whenever inputs change.  In the interest of keeping energy
+consumption low, we buffer the inputs of \atom{modaddsubn} as well in the
+\atom{modarithn} unit. All commands except "01" are done as soon as \atom{start}
+is released (actually, they're done on the next rising edge after clock, but
+coding that ran into vhdl syntax issues). So a mux selects \atom{done} from
+either the \atom{done} output of the multiplier (on command "01") or otherwise
+just outputs \atom{not start}. Output is chosen by mux based on the command from
+either \atom{modmultn}, \atom{modaddsubn}, or just the \atom{a} input (on
+\atom{NOP}) based on command received. The \atom{cmd\_reg} allows us to adjust
+the design to deal with the \atom{command} input becoming unstable after
+\atom{start} goes low.
 
 
 
