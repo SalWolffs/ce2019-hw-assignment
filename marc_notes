@@ -1,0 +1,15 @@
+rst is meestal rst_n (active low)
+signal order is (clk, rst, inputs, outputs)
+"_n" is "active low" (wat betekent dat rst_n = '0' een reset uitvoert)
+"_i" is inputs voor entity/component
+"_o" is outputs entity/component
+"_reg" is geklokte signalen
+"_nxt" is volgende waarde naar een reg
+
+Bij componenten met grote transporttijd: out_reg en in_reg allebei.
+
+Bij meerdere klokken (yikes, maar komt voor bij bijvoorbeeld een video
+output), klokken beginnen altijd "clk_"
+
+Omklokken (van de ene klok naar de andere gaan) is vreselijk. Vraag uw synthesis
+engineer om hulp. 
