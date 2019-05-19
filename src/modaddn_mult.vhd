@@ -8,12 +8,6 @@
 -- Description: n-bit modular multiplier (through consecutive additions)
 ----------------------------------------------------------------------------------
 
--- Define modaddn. We won't do any subtractions here, no need to use the more flexible unit.
-#include "modaddn.vhd" 
--- Define a finite state machine for counting cycles since start
-#include "ctr_fsm.vhd"
-
-
 -- include the STD_LOGIC_1164 package in the IEEE library for basic functionality
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
@@ -36,7 +30,7 @@ end modaddn_mult;
 -- describe the behavior of the module in the architecture
 architecture behavioral of modaddn_mult is
     signal enable: std_logic;
-    signal a_reg, b_reg, p_reg, prod_old, prod_new: std_logic_vector(n-1 downto 0);
+    signal a_reg, p_reg, prod_old, prod_new: std_logic_vector(n-1 downto 0);
 
     component modaddn
         generic(n: integer := 8);
@@ -62,7 +56,7 @@ begin
 
     counter: ctr_fsm
     generic map(size => n)
-    port map(count => b_reg,
+    port map(count => b,
              rst => rst,
              clk => clk,
              start => start,
@@ -73,13 +67,11 @@ begin
     begin
         if rst = '1' then
             a_reg <= std_logic_vector(to_unsigned(0,n));
-            b_reg <= std_logic_vector(to_unsigned(0,n));
             p_reg <= std_logic_vector(to_unsigned(0,n));
             prod_old <= std_logic_vector(to_unsigned(0,n));
         elsif rising_edge(clk) then
             if start = '1' then
                 a_reg <= a;
-                b_reg <= b;
                 p_reg <= p;
                 prod_old <= std_logic_vector(to_unsigned(0,n));
             elsif enable = '1' then

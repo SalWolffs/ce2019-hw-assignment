@@ -6,7 +6,7 @@
 -- Module Name: ctr_fsm
 -- Description: Counting finite state machine. Holds "done" after "count" number
 -- of cycles after start, until rst or start is given. Holds "enable" between
--- start and done. Does *not* store count internally. 
+-- start and done. 
 -------------------------------------------------------------------------------
 
 -- Standard libraries
@@ -26,30 +26,36 @@ architecture behavioral of ctr_fsm is
     type state_t is (s_idle, s_live, s_done);
 
     signal state: state_t;
-    signal ctr: std_logic_vector(size-1 downto 0);
+    signal ctr_reg: std_logic_vector(size-1 downto 0);
     signal nxt: std_logic_vector(size-1 downto 0);
+    signal fin_reg: std_logic_vector(size-1 downto 0);
 
 
 begin
 
-    nxt <= std_logic_vector(unsigned(ctr) + to_unsigned(1,size));
+    nxt <= std_logic_vector(unsigned(ctr_reg) + to_unsigned(1,size));
     -- Priority in conditions means we end up with nested if statements, rather
     -- than a case, since rst > start > s_live in determining what to do with
-    -- state and ctr.
+    -- state and ctr_reg.
     transitions: process(rst, clk)
     begin
         if rst = '1' then
             state <= s_idle;
-            ctr <= std_logic_vector(to_unsigned(0,size));
+            ctr_reg <= std_logic_vector(to_unsigned(0,size));
         elsif rising_edge(clk) then
             if start = '1' then
-                state <= s_live;
-                ctr <= std_logic_vector(to_unsigned(0,size));
+                ctr_reg <= std_logic_vector(to_unsigned(0,size));
+                fin_reg <= count;
+                if count = std_logic_vector(to_unsigned(0,size)) then
+                    state <= s_done; -- special case: 0 cycles "enable"
+                else
+                    state <= s_live;
+                end if;
             elsif state = s_live then
-                if count = std_logic_vector(to_unsigned(0,size)) or count = nxt then
+                if nxt = fin_reg then
                     state <= s_done;
                 end if;
-                ctr <= nxt;
+                ctr_reg <= nxt;
             end if;
         end if;
     end process;
