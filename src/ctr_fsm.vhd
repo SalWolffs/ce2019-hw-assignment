@@ -42,6 +42,7 @@ begin
         if rst = '1' then
             state <= s_idle;
             ctr_reg <= std_logic_vector(to_unsigned(0,size));
+            fin_reg <= std_logic_vector(to_unsigned(0,size));
         elsif rising_edge(clk) then
             if start = '1' then
                 ctr_reg <= std_logic_vector(to_unsigned(0,size));
