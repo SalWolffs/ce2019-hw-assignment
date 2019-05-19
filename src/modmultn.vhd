@@ -33,31 +33,94 @@ end modmultn;
 architecture behavioral of modmultn is
 
 -- declare internal signals
-signal a_reg, b_reg, p_reg: std_logic_vector(n-1 downto 0);
-signal shift, b_left: std_logic;
+    signal a_reg, a_masked, p_reg, prod_reg: std_logic_vector(n-1 downto 0);
+    signal prod_shift, prod_new, b_msb_wide: std_logic_vector(n-1 downto 0);
+    signal n_sig: std_logic_vector(log2n downto 0);
+    signal b_msb, enable: std_logic;
+
+    component modaddn
+        generic(n: integer := 8);
+        port(a, b, p: in std_logic_vector(n-1 downto 0);
+             sum: out std_logic_vector(n-1 downto 0));
+    end component;
+
+    component ctr_fsm
+        generic(size: integer := 4);
+        port(count: in std_logic_vector(size-1 downto 0);
+             rst, clk, start: in std_logic;
+             enable, done: out std_logic);
+    end component;
+
+    component piso_lshiftreg is
+        generic(size: integer := 4);
+        port(
+            data_in: in std_logic_vector(size-1 downto 0);
+            rst, clk, start: in std_logic;
+            msb_out: out std_logic);
+    end component;
+
+    component modlshiftn is
+        generic(size : integer := 8);
+        port(a, p: in std_logic_vector(n-1 downto 0);
+              result: out std_logic_vector(n-1 downto 0));
+    end component;
 
 begin
 
--- store the inputs 'a', 'b' and 'p' in the registers 'a_reg', 'b_reg' and 'p_reg', respectively, if start = '1'
--- the registers have an asynchronous reset
--- rotate the content of 'b_reg' one position to the left if shift = '1'
-reg_a_b_p: process(rst, clk)
-begin
-    if rst = '1' then
-        a_reg <= (others => '0');
-        b_reg <= (others => '0');
-        p_reg <= (others => '0');
-    elsif rising_edge(clk) = '1' then
-        if start = '1' then
-            a_reg <= a;
-            b_reg <= b;
-            p_reg <= p;
-        elsif shift = '1' then
-            b_reg <= b_reg(n-2 downto 0) & b_reg(n-1);
-        end if;
-    end if;
-end process;
+    b_shiftreg : piso_lshiftreg 
+    generic map(size => n)
+    port map(data_in => b,
+             rst => rst,
+             clk => clk,
+             start => start,
+             msb_out => b_msb);
 
-b_left <= b_reg(n-1);
+    n_sig <= std_logic_vector(to_unsigned(n,log2n+1));
+
+    fsm : ctr_fsm
+    generic map (size => log2n+1)
+    port map (count => n_sig,
+              rst => rst,
+              clk => clk,
+              start => start,
+              enable => enable,
+              done => done);
+
+    shifter : modlshiftn
+    generic map (size => n)
+    port map (a => prod_reg,
+              p => p,
+              result => prod_shift);
+    
+    b_msb_wide <= (others => b_msb);
+    a_masked <= a_reg and b_msb_wide;
+    adder : modaddn
+    generic map (n => n)
+    port map (a => a_masked,
+              b => prod_shift,
+              p => p_reg,
+              sum => prod_new);
+
+    main : process(rst,clk)
+    begin
+        if rst = '1' then
+           a_reg <= std_logic_vector(to_unsigned(0,n));
+           p_reg <= std_logic_vector(to_unsigned(0,n));
+           prod_reg <= std_logic_vector(to_unsigned(0,n));
+       elsif rising_edge(clk) then
+           if start = '1' then
+               a_reg <= a;
+               p_reg <= p;
+               prod_reg <= std_logic_vector(to_unsigned(0,n));
+           elsif enable = '1' then
+               prod_reg <= prod_new;
+           end if;
+       end if;
+   end process;
+
+   product <= prod_reg;
+
+
+
 
 end behavioral;
