@@ -29,3 +29,6 @@ wave/modmultn.ghw: src/modaddn.vhd src/ctr_fsm.vhd src/modlshiftn.vhd src/piso_l
 wave/modaddn_mult.ghw: src/modaddn.vhd src/ctr_fsm.vhd 
 wave/modaddn_mult5.ghw: src/modaddsubn.vhd
 wave/modarithn.ghw: src/modaddn.vhd src/ctr_fsm.vhd src/modlshiftn.vhd src/piso_lshiftreg.vhd src/modmultn.vhd src/modaddsubn.vhd
+wave/ecc_base.ghw: src/ecc_fsm.vhd src/modarithn.vhd src/ram_double.vhd \
+	src/modaddn.vhd src/ctr_fsm.vhd src/modlshiftn.vhd src/piso_lshiftreg.vhd \
+	src/modmultn.vhd src/modaddsubn.vhd
