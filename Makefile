@@ -4,7 +4,10 @@ all: wave/add4.ghw wave/addn.ghw wave/addsubn.ghw \
 	wave/modarithn.ghw wave/modmultn.ghw wave/ram_double.ghw \
 	wave/ram_single.ghw
 
-.PHONY: all
+clean:
+	rm -rf build wave
+
+.PHONY: all clean
 
 build/tb_%_stitched.vhd: testbenches/tb_%.vhd
 	mkdir -p build
