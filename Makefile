@@ -9,6 +9,9 @@ clean:
 
 .PHONY: all clean
 
+src/rbc_rom.vhd: src/rbc_rom.py
+	python3 src/rbc_rom.py > src/rbc_rom.vhd
+
 build/tb_%_stitched.vhd: testbenches/tb_%.vhd
 	mkdir -p build
 	gcc -E -P -x c testbenches/tb_$*.vhd -o build/tb_$*_stitched.vhd
