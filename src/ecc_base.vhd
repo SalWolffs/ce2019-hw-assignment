@@ -40,4 +40,6 @@ end ecc_base;
 -- describe the behavior of the module in the architecture
 architecture behavioral of ecc_base is
 
+begin
+
 end behavioral;

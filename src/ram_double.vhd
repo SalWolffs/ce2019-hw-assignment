@@ -33,3 +33,7 @@ end ram_double;
     
 -- describe the behavior of the module in the architecture
 architecture behavioral of ram_double is
+
+begin
+
+end
