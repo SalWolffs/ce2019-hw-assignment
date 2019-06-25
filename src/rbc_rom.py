@@ -91,7 +91,7 @@ ret = (0, 0, 0, 0)
 
 vhdl = '''
 -- unclocked ROM containing VLIW instructions from page 9
--- body generated with python:
+-- generated with python
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
@@ -124,6 +124,8 @@ def parse(s):
 for func in [addition_asm, doubling_asm]:
     instructions += [parse(line) for line in func]
     instructions += [ret]
+
+instructions += [ret] * (128 - len(instructions))
 
 rom_vhdl = ',\n    '.join(
     '{:03} => "{:03b}{:05b}{:05b}{:05b}"'.format(i, *p)
