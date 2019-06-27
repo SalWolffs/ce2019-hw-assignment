@@ -77,7 +77,7 @@ begin
                 a_start <= '0';
                 p_enable <= '1';
             when s_load_arith =>
-                free <= '1';
+                free <= '0';
                 done <= '0';
                 rw <= '0';
                 enable <= '1';

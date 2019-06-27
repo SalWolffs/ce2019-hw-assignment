@@ -88,6 +88,7 @@ Z3=t6+t6
 '''.split()
 
 ret = (0, 0, 0, 0)
+load_p = (4, 0, 0, 0)
 
 vhdl = '''
 -- unclocked ROM containing VLIW instructions from page 9
@@ -119,9 +120,10 @@ end behavioral;
 instructions = []
 
 def parse(s):
-    return opcode[s[-3]], addr[s[0:2]], addr[s[3:-3]], addr[s[-2:]]
+    return opcode[s[-3]], addr[s[0:2]], addr[s[-2:]], addr[s[3:-3]]
 
 for func in [addition_asm, doubling_asm]:
+    instructions += [load_p]
     instructions += [parse(line) for line in func]
     instructions += [ret]
 

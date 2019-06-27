@@ -25,7 +25,7 @@ architecture behavioral of ecc_add_double is
     signal state: state_t;
     signal ip, ip_start, ip_next: std_logic_vector(6 downto 0);
     signal instruction: std_logic_vector(17 downto 0);
-    signal base_busy, base_done: std_logic;
+    signal base_start, base_busy, base_done: std_logic;
 
 
     component ecc_base is
@@ -61,7 +61,7 @@ architecture behavioral of ecc_add_double is
 
 begin
 
-    ip_start <= "0000000" when add_double = '0' else "0101100";
+    ip_start <= "0000000" when add_double = '0' else "0101101";
     ip_next <= std_logic_vector(unsigned(ip) + 1);
 
     rom: rbc_rom
@@ -72,7 +72,7 @@ begin
     generic map (n => n,
                  log2n => log2n,
                  ads => ads)
-    port map (start => start,
+    port map (start => base_start,
               rst => rst,
               clk => clk,
               oper_a => instruction(4 downto 0),
@@ -95,20 +95,26 @@ begin
             if state = s_idle then
                 if start = '1' then
                     state <= s_busy;
+                    base_start <= '1';
                 end if;
                 ip <= ip_start;
             elsif state = s_busy then
                 if base_done = '1' then
-                    ip <= ip_next;
+                    if ((instruction(17)) = (instruction(16) or instruction(15))) then
+                        state <= s_done;
+                    else
+                        ip <= ip_next;
+                        base_start <= '1';
+                    end if;
                 end if;
             elsif state = s_done then
                 state <= s_idle;
             end if;
-        elsif falling_edge(clk) then
-            if state = s_busy then
-                if instruction(17 downto 15) = "000" then
-                    state <= s_done;
-                end if;
+        elsif falling_edge(clk) then 
+            -- this is horrible, but avoids race conditions on base_start during
+            -- clock-in of inputs.
+            if (base_busy = '1') and (base_start = '1') then
+                base_start <= '0';
             end if;
         end if;
     end process;
