@@ -99,17 +99,17 @@ begin
     wait for clk_period;
     -- Fill memory module with simple pattern
     i := 0;
-    address_i_b <= std_logic_vector(to_unsigned(0, ads));
+    address_b_i <= std_logic_vector(to_unsigned(0, ads));
     while(i < 2**ads) loop
         enable_i <= '1';
-        din_i <= std_logic_vector(to_unsigned(i, ws));
-        address_i_a <= std_logic_vector(to_unsigned(i, ads));
+        din_a_i <= std_logic_vector(to_unsigned(i, ws));
+        address_a_i <= std_logic_vector(to_unsigned(i, ads));
         rw_i <= '1';
         wait for clk_period;
         i := i + 1;
     end loop;
     wait for clk_period;
-    din_i <= std_logic_vector(to_unsigned(0, ws));
+    din_a_i <= std_logic_vector(to_unsigned(0, ws));
     -- Check if pattern is correct
     i := 0;
     while(i < 2**ads) loop
@@ -152,14 +152,14 @@ begin
     wait for clk_period;
     -- Try to write with enable turned off
     enable_i <= '0';
-    din_i <= std_logic_vector(to_unsigned(0, ws));
+    din_a_i <= std_logic_vector(to_unsigned(0, ws));
     address_a_i <= std_logic_vector(to_unsigned(15, ads));
     rw_i <= '1';
     wait for clk_period;
     -- Check if it was written
     i := 15;
     enable_i <= '1';
-    din_i <= std_logic_vector(to_unsigned(0, ws));
+    din_a_i <= std_logic_vector(to_unsigned(0, ws));
     address_a_i <= std_logic_vector(to_unsigned(i, ads));
     address_b_i <= std_logic_vector(to_unsigned(i, ads));
     rw_i <= '0';

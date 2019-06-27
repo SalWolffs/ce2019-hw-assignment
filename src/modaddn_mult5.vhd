@@ -9,8 +9,6 @@
 -- Description: n-bit modular constant multiplier (with constant = 5)
 ----------------------------------------------------------------------------------
 
-#include "modaddsubn.vhd"
-
 -- include the STD_LOGIC_1164 package in the IEEE library for basic functionality
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;

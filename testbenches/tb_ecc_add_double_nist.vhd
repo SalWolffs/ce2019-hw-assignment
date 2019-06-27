@@ -17,7 +17,7 @@ use IEEE.NUMERIC_STD.ALL;
 entity tb_ecc_add_double_nist is
     generic(
         n: integer := 256;
-        log2n: integer := 3);
+        log2n: integer := 8);
 end tb_ecc_add_double_nist;
 
 architecture behavioral of tb_ecc_add_double_nist is
