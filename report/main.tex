@@ -55,7 +55,41 @@ either \atom{modmultn}, \atom{modaddsubn}, or just the \atom{a} input (on
 the design to deal with the \atom{command} input becoming unstable after
 \atom{start} goes low.
 
+\section*{Exercise 11}
+\atom{ram\_double} is a copy of \atom{ram\_single} with references to
+\atom{dout} duplicated into \atom{dout\_a} and \atom{dout\_b}. \atom{address} is
+similarly duplicated, while \atom{din} is simply renamed to \atom{din\_a}.
 
+\section*{Exercise 12}
+For simplicity, we've separated the FSM in this exercise from the remaining
+logic. The FSM is implemented in \atom{ecc\_fsm} and is a direct implementation
+of the FSM described in the exercise, with one exception: In the
+\atom{s\_load\_arith} state, we set \atom{free} to 0 rather than 1. We believe
+the specification is in error here as it suggests loading directly from external
+RAM while the operations described in exercise 13 suggest all operands are
+stored in internal RAM instead. We use one process to describe the state
+transitions based on the input, which is triggered on reset and by the clock,
+and another process to set the outputs based only on the current state.
 
+The main \atom{ecc\_base} implementation instantiates an arithmetic unit, a
+two-operand internal RAM and the FSM mentioned above. The logic is exactly as
+described in the schematic from exercise 12. Because the FSM is in another file,
+the only parts left are creating the mutexes to switch between internal and
+external RAM and setting the current command and operands when the start signal
+is high.
+
+\section*{Exercise 13}
+We chose to use an instruction ROM to describe the addition and doubling
+formulas. It uses a simple Very Long Instruction Word architecture which
+directly maps the operands and command into the 18-bit instructions. The
+instruction ROM is generated using a simple Python script, see
+\atom{rbc\_rom.py}.
+
+\atom{ecc\_add\_double} uses \atom{rbc\_rom} by wiring its output directly to
+the \atom{ecc\_core} and incrementing the instruction pointer every time
+\atom{ecc\_core} sets its \atom{done} signal. We've corrected one bug in the
+NIST test: It used the value 256 for \atom{n}, but 3 for \atom{log2n}. The
+correct logarithm of \atom{n} is of course 8 and the compiler gave a warning
+when it wasn't equal to 8.
 
 \end{document}
