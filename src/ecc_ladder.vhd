@@ -19,7 +19,7 @@ entity ecc_ladder is
     );
 end ecc_ladder;
 
-architecture behavioral of ecc_core_wrap is
+architecture behavioral of ecc_ladder is
 
     subtype data_t is std_logic_vector(n-1 downto 0);
     subtype addr_t is std_logic_vector(4 downto 0);
