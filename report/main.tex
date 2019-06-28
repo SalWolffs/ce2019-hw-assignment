@@ -13,7 +13,7 @@
 \begin{document}
 \maketitle
 
-\section*{Exercise 4} 
+\section*{Exercise 4}
 \atom{modaddn.vhd} was written by copying \atom{modadd4.vhd} and replacing any
 occurrences of \atom{3} and \atom{4} by \atom{n-1} resp. \atom{n}, as per the
 example of \atom{addn.vhd} and \atom{add4.vhd}. Expanding the test bench was
@@ -24,10 +24,15 @@ appropriate values for \atom{sum\_true} in python.
 
 \section*{Exercise 7}
 For \atom{modaddn\_mult.vhd}, we wrote a separate file for the finite state
-machine (TODO: add full paragraph on \atom{ctr\_fsm}) and added it and
-\atom{modaddn} as components. \atom{modaddsubn} was not needed here, we know
-we'll only do additions. We adjusted the FSM to hold "done" after reaching its
-limit, rather than resetting. 
+machine, \atom{ctr\_fsm}, which it includes as a component. The FSM consists of
+a table of transitions depending on the input signals and triggered by the
+clock. A separate process computes the outputs based on the current state. The
+FSM is a generic one that simply counts for a number of cycles specified in an
+input, which allows us to reuse it in several components.
+
+Because the multiplier is defined in terms of only additions, we use a
+\atom{modaddn} rather than a \atom{modaddsubn}. We adjusted the FSM to hold
+"done" after reaching its limit, rather than resetting.
 
 \section*{Exercise 8}
 We wrote a modular piso left shift register (i.e. one that outputs the MSB and
@@ -35,12 +40,11 @@ shifts it out on each cycle) \atom{piso\_lshiftreg} to scan through the bits of
 \atom{b} in \atom{modmultn}. We also wrote a modulo left shifter which shifts
 its input by 1 bit and reduces it modulo the given \atom{p}, using the same
 logic as in \atom{modaddn}. Re-using \atom{ctr\_fsm}, this time with the width
-of \atom{b} as constant input (TODO: might be able to optimise by hardcoding
-within \atom{ctr\_fsm}, at the cost of losing this re-use), we could now easily
-double-and-add modulo p within the main module.
+of \atom{b} as constant input, we could now easily double-and-add modulo p
+within the main module.
 
 \section*{Exercise 9}
-TODO: Drawing. The basic design is a simple glueing of earlier components with
+The basic design is a simple glueing of earlier components with
 some muxes and input buffers: \atom{modmultn} has buffered input and only
 updates its inputs on receiving "start".  \atom{modaddsubn} is asynchronous, and
 so will compute whenever inputs change.  In the interest of keeping energy
