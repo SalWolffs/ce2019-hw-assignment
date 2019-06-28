@@ -75,7 +75,7 @@ begin
 
     ki <= k_reg(index_reg);
 
-    with ki and double select
+    with ki and double_reg select
         Pin1 <= R0_reg when '0',
                 R1_reg when '1',
                 ((others => 'X'),(others => 'X'),(others => 'X')) when others;
@@ -113,7 +113,7 @@ begin
             if start_i = '1' then
                 R0_reg <= ((others => '0'), std_logic_vector(to_unsigned(1,n)), (others => '0'));
                 R1_reg <= G;
-                k <= k_i;
+                k_reg <= k_i;
             elsif done_alu = '1' then
                 case ki xor double_reg is
                     when '1' => 
@@ -137,6 +137,22 @@ begin
             end if;
         end if;
     end process;
+
+    start: process(rst, clk)
+    begin
+        if rst = '1' then 
+            start_alu <= '0';
+        elsif rising_edge(clk) then
+            if start_i = '1' then
+                start_alu <= '1';
+            elsif start_alu = '1' then
+                start_alu <= '0';
+            elsif done_alu = '1' then
+                start_alu <= '1';
+            end if;
+        end if;
+    end process;
+
 
 
     done: process(rst, clk)

@@ -15,7 +15,7 @@ src/rbc_rom.vhd: src/rbc_rom.py
 
 wave/%.ghw: src/%.vhd testbenches/tb_%.vhd
 	mkdir -p wave 
-	ghdl -c $^ -r tb_$* --stop-time=1ms --wave=wave/$*.ghw
+	ghdl -c $^ -r tb_$* --stop-time=30ms --wave=wave/$*.ghw
 
 wave/ecc_add_double_%.ghw: src/ecc_add_double.vhd \
 	testbenches/tb_ecc_add_double_%.vhd \
@@ -32,3 +32,7 @@ wave/modarithn.ghw: src/modaddn.vhd src/ctr_fsm.vhd src/modlshiftn.vhd src/piso_
 wave/ecc_base.ghw: src/ecc_fsm.vhd src/modarithn.vhd src/ram_double.vhd \
 	src/modaddn.vhd src/ctr_fsm.vhd src/modlshiftn.vhd src/piso_lshiftreg.vhd \
 	src/modmultn.vhd src/modaddsubn.vhd
+wave/ecc_ladder.ghw: src/ecc_add_double.vhd src/ecc_core_wrap.vhd \
+	src/ecc_fsm.vhd src/modarithn.vhd src/ram_double.vhd \
+	src/modaddn.vhd src/ctr_fsm.vhd src/modlshiftn.vhd src/piso_lshiftreg.vhd \
+	src/modmultn.vhd src/modaddsubn.vhd src/rbc_rom.vhd src/ecc_base.vhd

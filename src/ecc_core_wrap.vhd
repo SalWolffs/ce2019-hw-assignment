@@ -27,7 +27,7 @@ architecture behavioral of ecc_core_wrap is
     subtype index_t is natural range 0 to 15;
     type state_t is (s_idle, s_init, s_wait, s_read, s_done);
 
-    signal start_core, done_core, busy_core, m_enable, m_write: std_logic;
+    signal start_core, done_core, busy_core, m_enable, m_write, done: std_logic;
     signal m_din, m_dout: data_t;
     signal X_reg, Y_reg, Z_reg: data_t;
     signal m_address: addr_t;
@@ -57,7 +57,7 @@ end component;
 begin
 
     index_nxt <= index_reg+1;
-    m_address <= std_logic_vector(to_unsigned(index_reg,5)) when '0';
+    m_address <= std_logic_vector(to_unsigned(index_reg,5));
 
     ecc_core: ecc_add_double
         generic map(n=>n,
@@ -123,7 +123,7 @@ begin
             case state_reg is
                 when s_idle => 
                     if start_i = '1' then
-                        index_reg <= 0;
+                        state_reg <= s_init;
                     end if;
                 when s_init => 
                     if index_reg = 8 then
@@ -149,23 +149,23 @@ begin
             when s_idle => 
                     m_write <= '0';
                     m_enable <= '0';
-                    done_o <= '0';
+                    done <= '0';
             when s_init => 
                     m_write <= '1';
                     m_enable <= '1';
-                    done_o <= '0';
+                    done <= '0';
             when s_wait => 
                     m_write <= '0';
                     m_enable <= '0';
-                    done_o <= '0';
+                    done <= '0';
             when s_read => 
                     m_write <= '0';
                     m_enable <= '1';
-                    done_o <= '0';
+                    done <= '0';
             when s_done => 
                     m_write <= '0';
                     m_enable <= '0';
-                    done_o <= '1';
+                    done <= '1';
         end case;
     end process;
 
@@ -176,12 +176,13 @@ begin
         elsif rising_edge(clk) then
             if m_enable = '1' then
                 index_reg <= index_nxt;
-            elsif done_o = '1' then
+            elsif done = '1' then
                 index_reg <= 0;
             end if;
         end if;
     end process;
 
+    done_o <= done;
 
 
 
