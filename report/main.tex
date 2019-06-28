@@ -40,7 +40,7 @@ within \atom{ctr\_fsm}, at the cost of losing this re-use), we could now easily
 double-and-add modulo p within the main module.
 
 \section*{Exercise 9}
-TODO: Drawing. The basic design is a simple glueing of earlier components with
+The basic design is a simple glueing of earlier components with
 some muxes and input buffers: \atom{modmultn} has buffered input and only
 updates its inputs on receiving "start".  \atom{modaddsubn} is asynchronous, and
 so will compute whenever inputs change.  In the interest of keeping energy
@@ -56,6 +56,62 @@ the design to deal with the \atom{command} input becoming unstable after
 \atom{start} goes low.
 
 
+\section*{Exercise 14}
+Since serially loading values into registers causes quite a bit of overhead, we
+added a component \atom{ecc\_core\_wrap} which presents an external parallel
+interface like most ALU-like units in this project. Internally, the main
+component is an instance of \atom{ecc\_add\_double}. On receiving the
+start signal, it iterates a pointer over the necessary RAM locations, setting
+\atom{m\_address} and \atom{m\_din} as appropriate. Then, it waits for
+\atom{ecc\_add\_double} to signal it's done, reads the result values into
+parallel registers, and then sets its own done signal.
 
+Given the above interface, the actual Montgomery ladder unit \atom{ecc\_ladder}
+becomes relatively simple. For convenience, we've bundled sets of numbers
+comprising a projective point on the curve into a data type. On all incoming and
+outgoing signals (both on our interface and on that of components), we bundle
+and unbundle such sets from/to three signals to/from one.
+
+We have three main data registers: \atom{R0\_reg}, \atom{R1\_reg}, and
+\atom{k\_reg} (where k is the input scalar). On start, we load these, and on the
+next cycle, we start calculation. We also keep a countdown from $n-1$ as per the
+loop in the Montgomery ladder algorithm.
+
+Notably, this component does not contain an explicit FSM. This is because we're
+tremendously helped by the regularity of the algorithm: once the core unit is
+done, we move to the next step. Steps always alternate between adding and
+doubling. Which register to double is determined by $k_i$. Which register to
+write to is determined by $k_i$ and whether we doubled. The core should always
+start a cycle after it's done, because we've clocked in the proper results at
+that point (note: there is likely a timing issue here, and we should add a
+1-clock delay). Our $k_i$ index is lowered every second step, which is when the
+core is done and we've just doubled. The unit is done once we've doubled and
+$k_i$ is 0.
+
+Unfortunately, running the testbench \atom{tb\_ecc\_ladder}, beside being slow
+(running about 1ms per minute), actually managed to crash GHDL. Since GHDL
+claimed this was its own fault (reporting it as a GHDL bug with a request to
+report it), we don't have a specific idea how to get around this, or what might
+be wrong. Therefore, we haven't been able to test \atom{ecc\_ladder} despite
+haivng written the testbench.
+
+\section*{Exercise 15}
+Unfortunately, we haven't been able to implement any of the things we'd planned
+after running into the testbench issue, since optimizing an untested unit is a
+fool's errand. Nonetheless, we had some plans:
+\begin{itemize}
+    \item Change the RAM interface to allow both parallel and addressed access,
+        obviating the need for a \atom{ecc\_core\_wrap}.
+    \item There are a lot of redundant registers on the inputs of the various
+        components. Since we know the outer components keep the inputs stable,
+        we can remove those, at the cost of some generality for the individual
+        components but gaining both clock cycles and space.
+    \item It should be doable to add a tripler to the modarithn unit, which
+        would allow some compression of the point arithmetic instructions. This
+        would also allow us to reorder the helper variables to use one less.
+    \item We could rewrite the assembly to do in-place computation of the point
+        arithmetic, saving enough memory words to actually shrink our address
+        space by one bit.
+\end{itemize}
 
 \end{document}
