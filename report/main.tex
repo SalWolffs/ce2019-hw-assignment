@@ -8,7 +8,8 @@
 
 \title{Cryptographic Engineering ECC Project}
 
-\author{Sal Wolffs, Lars Jellema}
+\author{Sal Wolffs, s4064542
+\\ Lars Jellema, s4388747}
 
 \begin{document}
 \maketitle
@@ -95,5 +96,16 @@ the \atom{ecc\_core} and incrementing the instruction pointer every time
 NIST test: It used the value 256 for \atom{n}, but 3 for \atom{log2n}. The
 correct logarithm of \atom{n} is of course 8 and the compiler gave a warning
 when it wasn't equal to 8.
+
+\section*{Conclusion}
+
+All in all, the course was quite fun, but a little rough around the edges. We
+had to figure out how to write decent VHDL code without ever being taught the
+relevant common wisdom. For example, it was sometimes unclear which component
+was supposed to be responsible for synchronization. There were also a few bugs
+in the assignment tests and description which are described above.
+
+Due to mistakes on our side we ran out of time, so our submission is a little
+rough around the edges as well.
 
 \end{document}
